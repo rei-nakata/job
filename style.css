@@ -1,0 +1,18 @@
+body {
+    padding: 20px 5%;
+}
+span, #table span{
+    color: red;
+}
+nav ul li, #insert {
+    float: left;
+}
+#insert{
+    background-color: lightblue;
+    width: 280px;
+    height: 200px;
+    margin: 5px;
+}
+#register form{
+    background-color: lightblue;
+}
