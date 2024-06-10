@@ -1,4 +1,6 @@
 <section id="insert" >
+    
+    
     id： <b style="color:green">!id!</b><br>
     店名： <b>!店名!</b><br>
     キャッチコピー： <b>!キャッチコピー!</b><br>
@@ -8,9 +10,11 @@
     <form action = "system.php" method = "post">
         <input type = "submit" name = "submit" value = "削除">
         <input type = "hidden" name = "mode" value = "delete">
-        <input type = "hidden" name = "id" value = "!id!">  
+        <input type = "hidden" name = "id" value = "!id!">
+    </form>
+    <form action = "system.php" method = "post">
         <input type = "submit" name = "submit" value = "編集">
         <input type = "hidden" name = "mode" value = "update">
-        <input type = "hidden" name = "id" value = "!id!">            
+        <input type = "hidden" name = "id" value = "!id!">
     </form>
 </section>

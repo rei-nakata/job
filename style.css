@@ -4,7 +4,7 @@ body {
 span, #table span{
     color: red;
 }
-nav ul li, #insert {
+nav ul li{
     float: left;
 }
 #insert{
@@ -12,7 +12,15 @@ nav ul li, #insert {
     width: 280px;
     height: 200px;
     margin: 5px;
+    float: left;
 }
 #register form{
     background-color: lightblue;
+}
+#user{
+    background-color: pink;
+    width: 280px;
+    height: 200px;
+    margin: 5px;
+    float: left;
 }

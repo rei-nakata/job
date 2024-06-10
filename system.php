@@ -15,7 +15,7 @@ if (isset($_SESSION["id"])) {
     echo "<br>";
     echo "<a href='logout.html'>ログアウト</a>";
     echo "<br>";
-    echo "<a href='index.html'>ユーザー画面へ</a>";
+    echo "<a href='index.php'>ユーザー画面へ</a>";
 } else {
     header("Location: index.html");
 }
@@ -63,8 +63,10 @@ try {
             delete();
             //header("Location:system.php");
             //exit();
-        // } else if ($input["mode"] === "update") {
-        //     update();
+            // } else if ($input["mode"] === "update") {
+            //     update();
+        } else if ($input["mode"] === "update") {
+            update();
         }
     }
     display();
@@ -151,7 +153,17 @@ function delete()
     // 関数内でも変数で使えるようにする
     global $dbh;
     global $input;
-
+    // if($input["mode"] === "delete") {
+    //     foreach($_POST['mode'] as $delete_id) {
+    //         // 削除クエリの実行
+    //         $sql = "DELETE FROM job WHERE id = ?";
+    //         $stmt = $dbh->prepare($sql);
+    //         $stmt->execute([$delete_id]);
+    //     }
+    //     echo "選択された項目を削除しました。";
+    // } else {
+    //     echo "削除する項目が選択されていません。";
+    // }
     // sql文を書く
     $sql = <<<sql
     update job set flag = 2 where id = ?
@@ -168,46 +180,117 @@ function delete()
     }
 }
 
-// お気に入り登録
-function favorite()
-{
-    // 関数内でも変数で使えるようにする
-    global $dbh;
-    global $input;
-
-    // sql文を書く
-    $sql = <<<sql
-    update job set flag = 1 where id = ?;
-    sql;
-
-    // 実行する
-    $stmt = $dbh->prepare($sql);
-    $stmt->bindParam(1, $input["id"]);
-    $stmt->execute();
-}
-
 // 編集処理
+// function update()
+// {
+//     global $input;
+//     global $dbh;
+
+//     //register();
+
+//     // sql文を書く
+//     $sql = <<<sql
+//         update job set 店名 = ?, キャッチコピー = ?, 職種 = ?, 最寄り駅 = ?, 時給 = ? where id = ?;
+//     sql;
+
+//     // 実行する
+//     $stmt = $dbh->prepare($sql);
+//     $stmt->bindParam(1, $input["店名"]);
+//     $stmt->bindParam(2, $input["キャッチコピー"]);
+//     $stmt->bindParam(3, $input["職種"]);
+//     $stmt->bindParam(4, $input["最寄り駅"]);
+//     $stmt->bindParam(5, $input["時給"]);
+//     $stmt->bindParam(6, $input["id"]);
+//     $stmt->execute();
+
+// }
 function update()
 {
     global $input;
     global $dbh;
+    global $tmpl_dir;
+
+    // $fh = fopen('tmpl/insert.tmpl', "r");
+    // $fs = filesize('tmpl/insert.tmpl');
+    // $insert_tmpl = fread($fh, $fs);
+    // fclose($fh);
+
+    $form = <<<html
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>管理者画面</title>
+    </head>
+    <body>
+        <section>
+            <h1>管理者画面</h1>
+            <h2>編集</h2>
+            <span>*は必須入力です</span>
+            <form action="system.php" method="post">
+                <table id="table">
+                    <tr>
+                        <td><span>*</span>店名</td>
+                        <td><input type="text" name="店名" value=""></td>
+                    </tr>
+                    <tr>
+                        <td><span>*</span>キャッチコピー</td>
+                        <td><input type="text" name="キャッチコピー" value=""></td>
+                    </tr>
+                    <tr>
+                        <td><span>*</span>職種</td>
+                        <td><input type="text" name="職種" value=""></td>
+                    </tr>
+                    <tr>
+                        <td><span>*</span>最寄り駅</td>
+                        <td><input type="text" name="最寄り駅" value=""></td>
+                    </tr>
+                    <tr>
+                        <td><span>*</span>時給</td>
+                        <td><input type="text" name="時給" value=""></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" name="submit" value="登録"></td>
+                        <td><input type="hidden" name="mode" value="register"></td>
+                    </tr>
+                </table>
+            </form>
+        </section>
+
+        <section>
+            <h2>現在の求人情報一覧</h2>
+            <!-- <form action="system.php" method="post"> -->
+                <!-- <input type="submit" value="削除">
+                <input type = "hidden" name = "mode" value = "delete"> -->
+            </form>
+            !block!
+        </section>
+
+    </body>
+    </html>
+    html;
+    echo $form;
     
-    //register();
-
-    // sql文を書く
-    $sql = <<<sql
+    if (isset($input["店名"]) && isset($input["キャッチコピー"]) && isset($input["職種"]) && isset($input["最寄り駅"]) && isset($input["時給"])) {
+        // sql文を書く
+        $sql = <<<sql
         update job set 店名 = ?, キャッチコピー = ?, 職種 = ?, 最寄り駅 = ?, 時給 = ? where id = ?;
-    sql;
+        sql;
 
-    // 実行する
-    $stmt = $dbh->prepare($sql);
-    $stmt->bindParam(1, $input["店名"]);
-    $stmt->bindParam(2, $input["キャッチコピー"]);
-    $stmt->bindParam(3, $input["職種"]);
-    $stmt->bindParam(4, $input["最寄り駅"]);
-    $stmt->bindParam(5, $input["時給"]);
-    $stmt->bindParam(6, $input["id"]);
-    $stmt->execute();
+        // 実行する
+        $stmt = $dbh->prepare($sql);
+        $stmt->bindParam(1, $input["店名"]);
+        $stmt->bindParam(2, $input["キャッチコピー"]);
+        $stmt->bindParam(3, $input["職種"]);
+        $stmt->bindParam(4, $input["最寄り駅"]);
+        $stmt->bindParam(5, $input["時給"]);
+        $stmt->bindParam(6, $input["id"]);
+        $stmt->execute();
+    } else {
+        error();
+    }
 }
 
 // 現在のタスク一覧表示処理
