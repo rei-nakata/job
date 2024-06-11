@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <title>求人情報</title>
+</head>
+
+<body>
+
+    <header>
+        <dv>
+            <h1>求人情報</h1>
+            </div>
+
+            <nav>
+                <ul>
+                    <li><a>検索</a></li>
+                    <li><a>お気に入り</a></li>
+                    <li><a href="login.html">管理者</a></li>
+                </ul>
+            </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>並び替え検索</h2>
+            <form action="user.php" method="post">
+                <select name="money" id="money">
+                    <option value="">登録順</option>
+                    <option value="">登録順</option>
+                    <option value=""></option>
+                </select>
+            </form>
+            <!-- 並び替えボタン -->
+        </section>
+        
+        <section>
+            <h2>絞り込み検索</h2>
+            <form action="user.php" method="post">
+                <input type="checkbox" name="search[]" value="飲食店">飲食店
+                <input type="checkbox" name="search[]" value="販売">販売
+                <input type="checkbox" name="search[]" value="アパレル">アパレル
+                <input type="checkbox" name="search[]" value="レジャー">レジャー
+                <input type="checkbox" name="search[]" value="塾講師">塾講師
+                <input type="checkbox" name="search[]" value="全て">全て
+                <input type="submit" name="click" value="検索">
+            </form>
+        </section>
+
+        <section id="us">
+            <h2>現在の求人情報一覧</h2>
+            !block!
+        </section>
+    </main>
+
+    <footer>
+
+    </footer>
+
+</body>
+
+</html>

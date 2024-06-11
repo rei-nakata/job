@@ -8,10 +8,10 @@ $dsn = "mysql:host=localhost; dbname=joblisting; charset=utf8";
 $user = "testuser";
 $pass = "testpass";
 
-//セッション情報を扱う
+// セッション情報
 session_start();
 if (isset($_SESSION["id"])) {
-    echo "{$_SESSION['id']}さん、こんにちは！";
+    echo "{$_SESSION['id']}さんでログイン中";
     echo "<br>";
     echo "<a href='logout.html'>ログアウト</a>";
     echo "<br>";
@@ -20,14 +20,15 @@ if (isset($_SESSION["id"])) {
     header("Location: index.html");
 }
 
-// テーブル表示処理のために必要な初期化
-$block = "";
+// // テーブル表示処理のために必要な初期化
+// $block = "";
+// $place = "";
 
 ////////////////////////////////////////////////////////////////
 // 本処理
 ////////////////////////////////////////////////////////////////
 
-// データを受け取る
+// データをmanager.htmlから受け取る
 $origin = [];
 if (isset($_POST)) {
     $origin += $_POST;
@@ -35,7 +36,7 @@ if (isset($_POST)) {
 
 // 受け取ったデータを処理する
 foreach ($origin as $key => $value) {
-    // 文字コード
+    // 文字コード処理
     $mb_code = mb_detect_encoding($value);
     $value = mb_convert_encoding($value, "UTF-8", $mb_code);
 
@@ -51,20 +52,14 @@ foreach ($origin as $key => $value) {
     $input[$key] = $value;
 }
 
-// DBに接続する
+// DBに接続する、モード管理する
 try {
     $dbh = new PDO($dsn, $user, $pass);
     if (isset($input["mode"])) {
         if ($input["mode"] === "register") {
             register();
-            //header("Location:system.php");
-            //exit();
         } else if ($input["mode"] === "delete") {
             delete();
-            //header("Location:system.php");
-            //exit();
-            // } else if ($input["mode"] === "update") {
-            //     update();
         } else if ($input["mode"] === "update") {
             update();
         }
@@ -78,7 +73,36 @@ try {
 // 関数
 ////////////////////////////////////////////////////////////////
 
-// エラー画面
+// 登録処理
+function register()
+{
+    // 関数内でも変数で使えるようにする
+    global $dbh;
+    global $input;
+
+    // 登録できる時だけsqlの実行をする
+    if (isset($input["店名"]) && isset($input["キャッチコピー"]) && isset($input["職種"]) && isset($input["最寄り駅"]) && isset($input["時給"])) {
+        // sql文を書く
+        $sql = <<<sql
+        insert into job (店名, キャッチコピー, 職種, 最寄り駅, 時給) values(?, ?, ?, ?, ?);
+        sql;
+
+        // 実行する
+        $stmt = $dbh->prepare($sql);
+        $stmt->bindParam(1, $input["店名"]);
+        $stmt->bindParam(2, $input["キャッチコピー"]);
+        $stmt->bindParam(3, $input["職種"]);
+        $stmt->bindParam(4, $input["最寄り駅"]);
+        $stmt->bindParam(5, $input["時給"]);
+        $stmt->execute();
+
+    } else {
+        // error対処
+        error();
+    }
+}
+
+// エラー処理
 function error()
 {
     // 関数内でも変数で使えるようにする
@@ -87,7 +111,7 @@ function error()
     // 空の変数用意
     $error_message = "";
 
-    //入力チェック
+    // 入力チェック
     if ($input["店名"] == "") {
         $error_message .= "店名が未入力です<br>";
     }
@@ -119,51 +143,13 @@ function error()
     exit;
 }
 
-// 登録処理
-function register()
-{
-    // 関数内でも変数で使えるようにする
-    global $dbh;
-    global $input;
-
-    // 登録できる時だけ
-    if (isset($input["店名"]) && isset($input["キャッチコピー"]) && isset($input["職種"]) && isset($input["最寄り駅"]) && isset($input["時給"])) {
-        // sql文を書く
-        $sql = <<<sql
-        insert into job (店名, キャッチコピー, 職種, 最寄り駅, 時給) values(?, ?, ?, ?, ?);
-        sql;
-
-        // 実行する
-        $stmt = $dbh->prepare($sql);
-        $stmt->bindParam(1, $input["店名"]);
-        $stmt->bindParam(2, $input["キャッチコピー"]);
-        $stmt->bindParam(3, $input["職種"]);
-        $stmt->bindParam(4, $input["最寄り駅"]);
-        $stmt->bindParam(5, $input["時給"]);
-        $stmt->execute();
-    } else {
-        // error対処
-        error();
-    }
-}
-
 // 削除処理
 function delete()
 {
     // 関数内でも変数で使えるようにする
     global $dbh;
     global $input;
-    // if($input["mode"] === "delete") {
-    //     foreach($_POST['mode'] as $delete_id) {
-    //         // 削除クエリの実行
-    //         $sql = "DELETE FROM job WHERE id = ?";
-    //         $stmt = $dbh->prepare($sql);
-    //         $stmt->execute([$delete_id]);
-    //     }
-    //     echo "選択された項目を削除しました。";
-    // } else {
-    //     echo "削除する項目が選択されていません。";
-    // }
+
     // sql文を書く
     $sql = <<<sql
     update job set flag = 2 where id = ?
@@ -180,117 +166,99 @@ function delete()
     }
 }
 
+// 表示処理
+function show()
+{
+    global $block;
+    global $place;
+    $fh2 = fopen('manager.html', "r");
+    $fs2 = filesize('manager.html');
+    $top = fread($fh2, $fs2);
+    fclose($fh2);
+
+    // manager.htmlの置き換え
+    $top = str_replace("!block!", $block, $top);
+    $top = str_replace("!place!", $place, $top);
+    echo $top;
+}
+
 // 編集処理
-// function update()
-// {
-//     global $input;
-//     global $dbh;
-
-//     //register();
-
-//     // sql文を書く
-//     $sql = <<<sql
-//         update job set 店名 = ?, キャッチコピー = ?, 職種 = ?, 最寄り駅 = ?, 時給 = ? where id = ?;
-//     sql;
-
-//     // 実行する
-//     $stmt = $dbh->prepare($sql);
-//     $stmt->bindParam(1, $input["店名"]);
-//     $stmt->bindParam(2, $input["キャッチコピー"]);
-//     $stmt->bindParam(3, $input["職種"]);
-//     $stmt->bindParam(4, $input["最寄り駅"]);
-//     $stmt->bindParam(5, $input["時給"]);
-//     $stmt->bindParam(6, $input["id"]);
-//     $stmt->execute();
-
-// }
 function update()
 {
+    // 関数内でも変数で使えるようにする
     global $input;
     global $dbh;
-    global $tmpl_dir;
 
-    // $fh = fopen('tmpl/insert.tmpl', "r");
-    // $fs = filesize('tmpl/insert.tmpl');
-    // $insert_tmpl = fread($fh, $fs);
-    // fclose($fh);
+    // 初期化する
+    $place = "";
 
-    $form = <<<html
-    <!DOCTYPE html>
-    <html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <title>管理者画面</title>
-    </head>
-    <body>
-        <section>
-            <h1>管理者画面</h1>
-            <h2>編集</h2>
-            <span>*は必須入力です</span>
-            <form action="system.php" method="post">
-                <table id="table">
-                    <tr>
-                        <td><span>*</span>店名</td>
-                        <td><input type="text" name="店名" value=""></td>
-                    </tr>
-                    <tr>
-                        <td><span>*</span>キャッチコピー</td>
-                        <td><input type="text" name="キャッチコピー" value=""></td>
-                    </tr>
-                    <tr>
-                        <td><span>*</span>職種</td>
-                        <td><input type="text" name="職種" value=""></td>
-                    </tr>
-                    <tr>
-                        <td><span>*</span>最寄り駅</td>
-                        <td><input type="text" name="最寄り駅" value=""></td>
-                    </tr>
-                    <tr>
-                        <td><span>*</span>時給</td>
-                        <td><input type="text" name="時給" value=""></td>
-                    </tr>
-                    <tr>
-                        <td><input type="submit" name="submit" value="登録"></td>
-                        <td><input type="hidden" name="mode" value="register"></td>
-                    </tr>
-                </table>
-            </form>
-        </section>
+    // sql文を書く
+    $sql = <<<sql
+    select * from job where id = ?;
+    sql;
 
-        <section>
-            <h2>現在の求人情報一覧</h2>
-            <!-- <form action="system.php" method="post"> -->
-                <!-- <input type="submit" value="削除">
-                <input type = "hidden" name = "mode" value = "delete"> -->
-            </form>
-            !block!
-        </section>
+    // 実行する
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(1, $input["id"]);
+    $stmt->execute();
 
-    </body>
-    </html>
-    html;
-    echo $form;
-    
-    if (isset($input["店名"]) && isset($input["キャッチコピー"]) && isset($input["職種"]) && isset($input["最寄り駅"]) && isset($input["時給"])) {
-        // sql文を書く
-        $sql = <<<sql
+    // テンプレートファイルの読み込み
+    $fh = fopen('tmpl/update.tmpl', "r");
+    $fs = filesize('tmpl/update.tmpl');
+    $update = fread($fh, $fs);
+    fclose($fh);
+
+    // 値を変数に入れなおす
+    $row = $stmt->fetch();
+    $id = $row["id"];
+    $shop = $row["店名"];
+    $catchcopy = $row["キャッチコピー"];
+    $job = $row["職種"];
+    $station = $row["最寄り駅"];
+    $money = $row["時給"];
+
+    // テンプレートファイルの文字置き換え
+    $update = str_replace("!id!", $id, $update);
+    $update = str_replace("!店名!", $shop, $update);
+    $update = str_replace("!キャッチコピー!", $catchcopy, $update);
+    $update = str_replace("!職種!", $job, $update);
+    $update = str_replace("!最寄り駅!", $station, $update);
+    $update = str_replace("!時給!", $money, $update);
+
+    // manager.htmlに差し込む変数に格納する
+    $place .= $update;
+
+    // ファイルの読み込み
+    $fh2 = fopen('manager.html', "r");
+    $fs2 = filesize('manager.html');
+    $top = fread($fh2, $fs2);
+    fclose($fh2);
+
+    // manager.htmlの置き換え
+    $top = str_replace("!place!", $place, $top);
+    echo $top;
+}
+
+// 更新処理
+function change()
+{
+    global $dbh;
+    global $input;
+
+    // sql文を書く
+    $sql = <<<sql
         update job set 店名 = ?, キャッチコピー = ?, 職種 = ?, 最寄り駅 = ?, 時給 = ? where id = ?;
-        sql;
+    sql;
 
-        // 実行する
-        $stmt = $dbh->prepare($sql);
-        $stmt->bindParam(1, $input["店名"]);
-        $stmt->bindParam(2, $input["キャッチコピー"]);
-        $stmt->bindParam(3, $input["職種"]);
-        $stmt->bindParam(4, $input["最寄り駅"]);
-        $stmt->bindParam(5, $input["時給"]);
-        $stmt->bindParam(6, $input["id"]);
-        $stmt->execute();
-    } else {
-        error();
-    }
+    // 実行する
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(1, $input["店名"]);
+    $stmt->bindParam(2, $input["キャッチコピー"]);
+    $stmt->bindParam(3, $input["職種"]);
+    $stmt->bindParam(4, $input["最寄り駅"]);
+    $stmt->bindParam(5, $input["時給"]);
+    $stmt->bindParam(6, $input["id"]);
+    $stmt->execute();
 }
 
 // 現在のタスク一覧表示処理
@@ -340,6 +308,7 @@ function display()
         $block .= $insert;
     }
 
+    // ファイルの読み込み
     $fh2 = fopen('manager.html', "r");
     $fs2 = filesize('manager.html');
     $top = fread($fh2, $fs2);

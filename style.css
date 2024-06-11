@@ -16,6 +16,7 @@ nav ul li{
 }
 #register form{
     background-color: lightblue;
+    width: 590px;
 }
 #user{
     background-color: pink;
@@ -23,4 +24,14 @@ nav ul li{
     height: 200px;
     margin: 5px;
     float: left;
+}
+#update form{
+    background-color: lightblue;
+    width: 590px;
+}
+#register{
+    float: left;
+}
+#update{
+    float: right;
 }
