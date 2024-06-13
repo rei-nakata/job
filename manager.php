@@ -13,16 +13,12 @@ session_start();
 if (isset($_SESSION["id"])) {
     echo "{$_SESSION['id']}さんでログイン中";
     echo "<br>";
-    echo "<a href='logout.html'>ログアウト</a>";
+    echo "<a href='user.php'>ログアウト</a>";
     echo "<br>";
-    echo "<a href='index.php'>ユーザー画面へ</a>";
+    // echo "<a href='index.php'>ユーザー画面へ</a>";
 } else {
     header("Location: index.html");
 }
-
-// // テーブル表示処理のために必要な初期化
-// $block = "";
-// $place = "";
 
 ////////////////////////////////////////////////////////////////
 // 本処理
@@ -63,8 +59,16 @@ try {
         } else if ($input["mode"] === "update") {
             update();
         }
+        else if ($input["mode"] === "change")
+        {
+            change();
+        }
     }
     display();
+    // $output = "";
+    // $output .= display();
+    // $output .= update();
+    // echo $output;
 } catch (PDOException $e) {
     echo "接続失敗..." . $e->getMessage();
 }
@@ -178,7 +182,7 @@ function show()
 
     // manager.htmlの置き換え
     $top = str_replace("!block!", $block, $top);
-    $top = str_replace("!place!", $place, $top);
+    $top = str_replace("編集するときはこちらに表示されます", $place, $top);
     echo $top;
 }
 
@@ -228,15 +232,15 @@ function update()
     // manager.htmlに差し込む変数に格納する
     $place .= $update;
 
-    // ファイルの読み込み
-    $fh2 = fopen('manager.html', "r");
-    $fs2 = filesize('manager.html');
-    $top = fread($fh2, $fs2);
-    fclose($fh2);
+    // // ファイルの読み込み
+    // $fh2 = fopen('manager.html', "r");
+    // $fs2 = filesize('manager.html');
+    // $top = fread($fh2, $fs2);
+    // fclose($fh2);
 
-    // manager.htmlの置き換え
-    $top = str_replace("!place!", $place, $top);
-    echo $top;
+    // // manager.htmlの置き換え
+    // $top = str_replace("編集するときはこちらに表示されます", $place, $top);
+    echo $place;
 }
 
 // 更新処理
@@ -267,10 +271,11 @@ function display()
     // 関数内でも変数を使えるようにする
     global $dbh;
     global $block;
+    global $place;
 
     // sql文を書く
     $sql = <<<sql
-    select * from job where flag = 0;
+    select * from job where flag in (0,1);
     sql;
 
     // 実行する
@@ -315,6 +320,11 @@ function display()
     fclose($fh2);
 
     // manager.htmlの置き換え
+    $top = str_replace("編集するときはこちらに表示されます", $place, $top);
     $top = str_replace("!block!", $block, $top);
+    // echo $block;
     echo $top;
+
+    //show();
+    // return $block;
 }

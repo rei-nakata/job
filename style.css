@@ -1,37 +1,88 @@
+:root{
+    background-color: lightblue;
+}
 body {
-    padding: 20px 5%;
+    padding:5%;
+    margin: 2%;
+    background-color: white;
+}
+footer{
+    clear: both;
+}
+h1, h2{
+    background-color: lightblue;
+    clear: both;
 }
 span, #table span{
     color: red;
 }
-nav ul li{
-    float: left;
-}
-#insert{
-    background-color: lightblue;
-    width: 280px;
-    height: 200px;
-    margin: 5px;
-    float: left;
-}
-#register form{
-    background-color: lightblue;
-    width: 590px;
-}
-#user{
-    background-color: pink;
-    width: 280px;
-    height: 200px;
-    margin: 5px;
-    float: left;
-}
-#update form{
-    background-color: lightblue;
-    width: 590px;
-}
-#register{
-    float: left;
-}
-#update{
+nav{
     float: right;
+}
+.atag {
+    color: inherit; 
+    text-decoration: none;
+}
+.display{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+#user, #favorite{
+    border-color: lightblue;
+    border-style: solid;
+    border-width: 5px;
+    width: 30%;
+    margin: 5px;
+    border-radius: 20px;
+    padding: 5px;
+}
+#narabikae, .edit{
+    float: right;
+    width: 49%;
+}
+#siborikomi, .register{
+    float: left;
+    width: 49%;
+}
+.holder, .insert{
+    text-align: center;
+    align-items: center;
+}
+.login {
+    max-width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    margin: 0 auto;
+}
+.update{
+    background-color: lightgreen;
+}
+.delete{
+    background-color: lightsalmon;
+}
+.favorite{
+    background-color: rgb(235, 235, 115);
+}
+.insert {
+    border-collapse: collapse; /* セルの境界線を重ねる */
+    border: 1px solid lightblue; /* 表の線の色と太さを指定 */
+    width: 100%;
+}
+
+.insert td, .insert th{
+    border: 2px solid lightblue; /* セルの線の色と太さを指定 */
+    padding: 8px; /* セルの内側の余白を指定 */
+    vertical-align: middle;
+}
+.insert td form{
+    vertical-align: middle;
+}
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    margin: 0 auto;
+    width: 100%;
 }

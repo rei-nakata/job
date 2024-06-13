@@ -34,8 +34,7 @@ if ($input["id"] != "" && $input["pass"] != "") {
         echo "ログイン成功<br>";
         session_start(); //セッション情報を扱う
         $_SESSION["id"] = $input["id"]; //セッション情報を保存する
-        echo "{$_SESSION['id']}さん、こんにちは！";
-        echo "<p><a href='system.php'>管理者画面に進む</a></p>";
+        header('Location:manager.php');
     } else {
         echo "IDまたはパスワードが間違っています。";
         echo <<<form

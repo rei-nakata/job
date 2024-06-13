@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <title>求人情報</title>
+</head>
+
+<body>
+    <header>
+        <div>
+            <h1><a href="user.php" class="atag">求人情報</a></h1>
+        </div>
+        <nav>
+            <p><a href="login.html">管理者はこちら</a></p>
+        </nav>
+    </header>
+
+    <main>
+        <h2>お気に入り</h2>
+        <section class="display">
+            現在お気に入りはありません。
+        </section>
+
+        <section>
+            <h2>検索</h2>
+        </section>
+        <section id="narabikae">
+            <h3>並び替え検索</h3>
+            <form action="user.php" method="post">
+                <select name="narabikae">
+                    <option name="narabikae" value="---">---</option>
+                    <option name="narabikae" value="新着順">新着順</option>
+                    <option name="narabikae" value="時給順">時給順</option>
+                </select>
+                <input type="submit" name="submit" value="検索">
+                <input type="hidden" name="mode" value="narabikae">
+            </form>
+        </section>
+
+        <section id="siborikomi">
+            <h3>職種絞り込み検索</h3>
+            <form action="user.php" method="post">
+                <input type="radio" name="search" value="飲食店">飲食店
+                <input type="radio" name="search" value="販売">販売
+                <input type="radio" name="search" value="アパレル">アパレル
+                <input type="radio" name="search" value="レジャー">レジャー
+                <input type="radio" name="search" value="塾講師">塾講師
+                <input type="radio" name="search" value="全て">全て
+                <input type="submit" name="submit" value="検索">
+                <input type="hidden" name="mode" value="search">
+            </form>
+        </section>
+
+        <h2>現在の求人情報一覧</h2>
+        <section class="display">
+            !block!
+        </section>
+    </main>
+
+    <footer>
+        <p><a href="">ページtopへ</a></p>
+    </footer>
+
+</body>
+
+</html>
