@@ -58,9 +58,7 @@ try {
             delete();
         } else if ($input["mode"] === "update") {
             update();
-        }
-        else if ($input["mode"] === "change")
-        {
+        } else if ($input["mode"] === "change") {
             change();
         }
     }
@@ -99,53 +97,52 @@ function register()
         $stmt->bindParam(4, $input["最寄り駅"]);
         $stmt->bindParam(5, $input["時給"]);
         $stmt->execute();
-
     } else {
         // error対処
-        error();
+        //error();
     }
 }
 
 // エラー処理
-function error()
-{
-    // 関数内でも変数で使えるようにする
-    global $input;
+// function error()
+// {
+//     // 関数内でも変数で使えるようにする
+//     global $input;
 
-    // 空の変数用意
-    $error_message = "";
+//     // 空の変数用意
+//     $error_message = "";
 
-    // 入力チェック
-    if ($input["店名"] == "") {
-        $error_message .= "店名が未入力です<br>";
-    }
-    if ($input["キャッチコピー"] == "") {
-        $error_message .= "キャッチコピーが未入力です<br>";
-    }
-    if ($input["職種"] == "") {
-        $error_message .= "職種が未入力です<br>";
-    }
-    if ($input["最寄り駅"] == "") {
-        $error_message .= "最寄り駅が未入力です<br>";
-    }
-    if ($input["時給"] == "") {
-        $error_message .= "時給が未入力です<br>";
-    }
+//     // 入力チェック
+//     if ($input["店名"] == "") {
+//         $error_message .= "店名が未入力です<br>";
+//     }
+//     if ($input["キャッチコピー"] == "") {
+//         $error_message .= "キャッチコピーが未入力です<br>";
+//     }
+//     if ($input["職種"] == "") {
+//         $error_message .= "職種が未入力です<br>";
+//     }
+//     if ($input["最寄り駅"] == "") {
+//         $error_message .= "最寄り駅が未入力です<br>";
+//     }
+//     if ($input["時給"] == "") {
+//         $error_message .= "時給が未入力です<br>";
+//     }
 
-    // errorのテンプレート読み込み
-    $error = fopen("tmpl/error.tmpl", "r");
-    $size = filesize("tmpl/error.tmpl");
-    $data = fread($error, $size);
-    fclose($error);
+//     // errorのテンプレート読み込み
+//     $error = fopen("tmpl/error.tmpl", "r");
+//     $size = filesize("tmpl/error.tmpl");
+//     $data = fread($error, $size);
+//     fclose($error);
 
-    // 文字置き換え
-    $data = str_replace("!message!", $error_message, $data);
+//     // 文字置き換え
+//     $data = str_replace("!message!", $error_message, $data);
 
-    echo $data;
+//     echo $data;
 
-    // 処理終了
-    exit;
-}
+//     // 処理終了
+//     exit;
+// }
 
 // 削除処理
 function delete()
@@ -171,20 +168,20 @@ function delete()
 }
 
 // 表示処理
-function show()
-{
-    global $block;
-    global $place;
-    $fh2 = fopen('manager.html', "r");
-    $fs2 = filesize('manager.html');
-    $top = fread($fh2, $fs2);
-    fclose($fh2);
+// function show()
+// {
+//     global $block;
+//     global $place;
+//     $fh2 = fopen('manager.html', "r");
+//     $fs2 = filesize('manager.html');
+//     $top = fread($fh2, $fs2);
+//     fclose($fh2);
 
-    // manager.htmlの置き換え
-    $top = str_replace("!block!", $block, $top);
-    $top = str_replace("編集するときはこちらに表示されます", $place, $top);
-    echo $top;
-}
+//     // manager.htmlの置き換え
+//     $top = str_replace("!block!", $block, $top);
+//     $top = str_replace("編集するときはこちらに表示されます", $place, $top);
+//     echo $top;
+// }
 
 // 編集処理
 function update()
@@ -235,12 +232,12 @@ function update()
     // // ファイルの読み込み
     // $fh2 = fopen('manager.html', "r");
     // $fs2 = filesize('manager.html');
-    // $top = fread($fh2, $fs2);
+    // $top2 = fread($fh2, $fs2);
     // fclose($fh2);
 
     // // manager.htmlの置き換え
-    // $top = str_replace("編集するときはこちらに表示されます", $place, $top);
-    echo $place;
+    // $top2 = str_replace("編集するときはこちらに表示されます", $place, $top2);
+    // echo $place;
 }
 
 // 更新処理
@@ -272,6 +269,7 @@ function display()
     global $dbh;
     global $block;
     global $place;
+    global $top2;
 
     // sql文を書く
     $sql = <<<sql
@@ -320,8 +318,14 @@ function display()
     fclose($fh2);
 
     // manager.htmlの置き換え
+    
     $top = str_replace("編集するときはこちらに表示されます", $place, $top);
-    $top = str_replace("!block!", $block, $top);
+    // $top = str_replace("!block!", $block, $top);
+    if (isset($input["mode"]) && $input["mode"] == "update")
+    {
+        // $top = str_replace("編集するときはこちらに表示されます", $place, $top);
+    }
+    // $top = str_replace("編集するときはこちらに表示されます", $top2, $top);
     // echo $block;
     echo $top;
 
